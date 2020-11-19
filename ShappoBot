@@ -1,0 +1,40 @@
+import time
+import socket
+import logging
+print ("Bot initialiseren")
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s — %(message)s',
+                    datefmt='%Y-%m-%d_%H:%M:%S',
+                    handlers=[logging.FileHandler('commands.log', encoding='utf-8')])
+server = "irc.twitch.tv"
+port = 6667
+nickname = "" #Accountnaam
+token = "" #http://www.twitchapps.com/tmi/ 
+channel = "#shappo0"
+def chat(s, msg):
+	s.send("PRIVMSG {} :{}\r\n".format(channel, msg).encode("utf-8"))
+def timecheck (curtime):
+	check = curtime - time.time()
+print (nickname, "maakt verbinding met", channel)
+logging.info("%s maakt verbinding met %s" % (nickname, channel))
+def main():
+    s = socket.socket()
+    s.connect((server, port))
+    s.send(f"PASS {token}\r\n".encode('utf-8'))
+    s.send(f"NICK {nickname}\r\n".encode('utf-8'))
+    s.send(f"JOIN {channel}\r\n".encode('utf-8'))
+    print("Verbonden met", channel)
+    chat(s,"Hey daar ben ik dan")
+    play_time = time.time()
+    try:
+        while True:
+            resp = s.recv(2048).decode('utf-8')
+            if (time.time() - play_time) >= 60:
+                if resp.find("!play")!=-1:
+                    chat(s,"!play")
+                    play_time = time.time()
+    except KeyboardInterrupt:
+        s.close()
+        exit()
+if __name__ == '__main__':
+    main()
