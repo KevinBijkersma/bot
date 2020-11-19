@@ -4,8 +4,8 @@ import socket
 print ("Bot initialiseren")
 server = "irc.twitch.tv"
 port = 6667
-nickname = "tepeljestreeltje" #Accountnaam
-token = "oauth:dvp4a5vpyutoi6ihjldwrzbk17tr9h" #http://www.twitchapps.com/tmi/ 
+nickname = "" #Accountnaam
+token = "" #http://www.twitchapps.com/tmi/ 
 channel = "#shappo0"
 def chat(s, msg):
 	s.send("PRIVMSG {} :{}\r\n".format(channel, msg).encode("utf-8"))
