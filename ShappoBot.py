@@ -32,7 +32,7 @@ def main():
                     if resp.find("!play")!=-1:
                         chat(s,"!play")
                         play_time = time.time()
-			print(datetime.datetime.now().time())
+                        print(datetime.datetime.now().time())
     except KeyboardInterrupt:
         s.close()
         exit()
