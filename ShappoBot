@@ -1,11 +1,7 @@
 import time
+import datetime
 import socket
-import logging
 print ("Bot initialiseren")
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s — %(message)s',
-                    datefmt='%Y-%m-%d_%H:%M:%S',
-                    handlers=[logging.FileHandler('commands.log', encoding='utf-8')])
 server = "irc.twitch.tv"
 port = 6667
 nickname = "" #Accountnaam
@@ -13,10 +9,13 @@ token = "" #http://www.twitchapps.com/tmi/
 channel = "#shappo0"
 def chat(s, msg):
 	s.send("PRIVMSG {} :{}\r\n".format(channel, msg).encode("utf-8"))
-def timecheck (curtime):
-	check = curtime - time.time()
-print (nickname, "maakt verbinding met", channel)
-logging.info("%s maakt verbinding met %s" % (nickname, channel))
+def is_time_between(begin_time, end_time, check_time=None):
+    # If check time is not given, default to current UTC time
+    check_time = check_time or datetime.datetime.now().time()
+    if begin_time < end_time:
+        return check_time >= begin_time and check_time <= end_time
+    else: # crosses midnight
+        return check_time >= begin_time or check_time <= end_time
 def main():
     s = socket.socket()
     s.connect((server, port))
@@ -24,15 +23,15 @@ def main():
     s.send(f"NICK {nickname}\r\n".encode('utf-8'))
     s.send(f"JOIN {channel}\r\n".encode('utf-8'))
     print("Verbonden met", channel)
-    chat(s,"Hey daar ben ik dan")
     play_time = time.time()
     try:
         while True:
-            resp = s.recv(2048).decode('utf-8')
-            if (time.time() - play_time) >= 60:
-                if resp.find("!play")!=-1:
-                    chat(s,"!play")
-                    play_time = time.time()
+            if is_time_between(datetime.time(21,20), datetime.time(23,30)) == True:
+                resp = s.recv(2048).decode('utf-8')
+                if (time.time() - play_time) >= 60:
+                    if resp.find("!play")!=-1:
+                        chat(s,"!play")
+                        play_time = time.time()
     except KeyboardInterrupt:
         s.close()
         exit()
